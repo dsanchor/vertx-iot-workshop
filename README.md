@@ -30,7 +30,7 @@ Create, build and deploy application on Openshift (choose either binary or sourc
 
 `oc process -f homeplan/openshift/homeplan-source-template.yml | oc create -f - -n vertx`
 
-#### Test Rest API 
+### Test Rest API 
 
 Download [Postman](https://www.getpostman.com/)
 
