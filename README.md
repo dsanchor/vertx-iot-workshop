@@ -1,8 +1,10 @@
-# vertx-iot-workshop
+# vertx-iot-workshop (TODO.. more services will be added soon)
 
 ## Homeplan service
 
 ### Step by step configuration on openshift
+
+Login in Openshift (change user/password and set your ocp master api url)
 
 `oc login -u user -p password https://ocp-domain.com`
 
