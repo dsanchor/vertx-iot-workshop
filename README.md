@@ -40,7 +40,7 @@ Import project located under homeplan/postman/vertx.postman_collection.json
 
 Import environment configuration under homeplan/postman/online.postman_environment.json (modify properties if required)
 
-Play with the examples request!
+Play with the example requests!
 
 
 ### Delete objects in openshift (homemplan service and mongodb)
