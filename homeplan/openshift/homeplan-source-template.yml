@@ -24,9 +24,9 @@ objects:
     runPolicy: Serial
     source:
       git: 
-        uri: "https://github.com/dsanchor/vertx-iot-workshop"
-        ref: "master"
-      contextDir: "homeplan"
+        uri: https://github.com/dsanchor/vertx-iot-workshop
+        ref: master
+      contextDir: homeplan
     strategy:
       sourceStrategy:
         from:
