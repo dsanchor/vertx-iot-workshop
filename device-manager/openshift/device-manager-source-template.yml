@@ -121,45 +121,6 @@ objects:
           kind: ImageStreamTag
           name: ${DEVMANAGER_APP_NAME}:latest
       type: ImageChange
-- apiVersion: v1
-  kind: Service
-  metadata:
-    labels:
-      app: ${DEVMANAGER_APP_NAME}
-      expose: "true"
-      microservice: ${DEVMANAGER_APP_NAME}
-    name: ${DEVMANAGER_APP_NAME}
-  spec:
-    ports:
-    - name: http
-      port: 8080
-      protocol: TCP
-      targetPort: 8080
-    selector:
-      app: ${DEVMANAGER_APP_NAME}
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Route
-  metadata:
-    annotations:
-      openshift.io/host.generated: "true"
-    creationTimestamp: null
-    labels:
-      app: ${DEVMANAGER_APP_NAME}
-      expose: "true"
-      microservice: ${DEVMANAGER_APP_NAME}
-    name: ${DEVMANAGER_APP_NAME}
-  spec:
-    port:
-      targetPort: 8080
-    to:
-      kind: Service
-      name: ${DEVMANAGER_APP_NAME}
-      weight: 100
-    wildcardPolicy: None
 parameters:
 - description: Name of the Device manager microservice. This name will be also added to a global label called 'microservice'.
   displayName: Homeplan application name

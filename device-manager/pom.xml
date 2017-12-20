@@ -14,6 +14,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<!-- F8 configuration -->
 		<fabric8.generator.from>registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift</fabric8.generator.from>
+		<openshift.client.version>1.4.35</openshift.client.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -40,11 +41,23 @@
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-service-discovery-bridge-kubernetes</artifactId>
 		</dependency>
-	        <!-- required by vertx-service-discovery-bridge-kubernetes -->
+		<!-- required by vertx-service-discovery-bridge-kubernetes -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.21</version>
+		</dependency>
+		<!-- Openshift client dependencies: very old version comming from vertx-service-discovery-bridge-kubernetes -->
+		<!-- WARN: do not update to newer version if it is not compatible with vertx-service-discovery-bridge-kubernetes -->
+		<dependency>
+			<groupId>io.fabric8</groupId>
+			<artifactId>openshift-client</artifactId>
+			<version>${openshift.client.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.fabric8</groupId>
+			<artifactId>kubernetes-client</artifactId>
+			<version>${openshift.client.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
