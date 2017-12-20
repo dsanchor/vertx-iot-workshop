@@ -48,6 +48,12 @@
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-service-discovery-bridge-kubernetes</artifactId>
 		</dependency>
+	        <!-- required by vertx-service-discovery-bridge-kubernetes -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.21</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
