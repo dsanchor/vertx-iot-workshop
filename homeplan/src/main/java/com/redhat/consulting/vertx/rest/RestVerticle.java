@@ -22,10 +22,13 @@ public class RestVerticle extends AbstractVerticle {
 
 	public static final String ROOT_PATH = "/homeplans";
 	public static final String ID_PARAM = "id";
-	
+
+	public static final String HOMEPLAN_ID_HEADER = "homeplan-id";
+
 	// device-manager integration
 	public static final String DEVICE_REGISTRATION_SERVICE_ADDRESS = "devices";
 	public static final String DEVICE_OPERATION_HEADER = "device-operation";
+
 	public enum DeviceManagerOperation {
 		REGISTER, UNREGISTER
 	};
@@ -70,7 +73,7 @@ public class RestVerticle extends AbstractVerticle {
 		vertx.eventBus().<String>send(HomeplanDbVerticle.HOMEPLAN_DB_SERVICE_ADDRESS, "",
 				buildDbDeliveryOptions(HomeplanDbVerticle.Operation.GETONE, rc.request().getParam(ID_PARAM)), reply -> {
 					if (reply.succeeded()) {
-						if (reply.result()!=null) {
+						if (reply.result() != null) {
 							logger.info("Homeplan returned");
 							rc.response().putHeader("content-type", "application/json; charset=utf-8")
 									.end(reply.result().body());
@@ -94,7 +97,9 @@ public class RestVerticle extends AbstractVerticle {
 						for (Room room : homeplan.getRooms()) {
 							logger.info("Registering devices of room " + room.getId());
 							// TODO refactor using futures?
-							vertx.eventBus().send(DEVICE_REGISTRATION_SERVICE_ADDRESS, room.toJson().encode(), buildDeviceManagerDeliveryOptions(DeviceManagerOperation.REGISTER));
+							vertx.eventBus().send(DEVICE_REGISTRATION_SERVICE_ADDRESS, room.toJson().encode(),
+									buildDeviceManagerDeliveryOptions(DeviceManagerOperation.REGISTER,
+											homeplan.getId()));
 
 						}
 						logger.info("Homeplan created");
@@ -132,12 +137,13 @@ public class RestVerticle extends AbstractVerticle {
 				});
 	}
 
-	private DeliveryOptions buildDeviceManagerDeliveryOptions(DeviceManagerOperation operation) {
+	private DeliveryOptions buildDeviceManagerDeliveryOptions(DeviceManagerOperation operation, String homeplanId) {
 		DeliveryOptions options = new DeliveryOptions();
+		options.addHeader(HOMEPLAN_ID_HEADER, homeplanId);
 		options.addHeader(DEVICE_OPERATION_HEADER, operation.toString());
 		return options;
 	}
-	
+
 	private DeliveryOptions buildDbDeliveryOptions(Operation operation) {
 		DeliveryOptions options = new DeliveryOptions();
 		options.addHeader(HomeplanDbVerticle.OPERATION_HEADER, operation.toString());
@@ -146,7 +152,7 @@ public class RestVerticle extends AbstractVerticle {
 
 	private DeliveryOptions buildDbDeliveryOptions(Operation operation, String homeplanId) {
 		DeliveryOptions options = buildDbDeliveryOptions(operation);
-		options.addHeader(HomeplanDbVerticle.HOMEPLAN_ID_HEADER, homeplanId);
+		options.addHeader(HOMEPLAN_ID_HEADER, homeplanId);
 		return options;
 	}
 

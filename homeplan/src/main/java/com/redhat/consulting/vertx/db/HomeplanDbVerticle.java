@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.redhat.consulting.vertx.model.Homeplan;
+import com.redhat.consulting.vertx.rest.RestVerticle;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
@@ -30,7 +31,6 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 	public static final String HOMEPLAN_DB_SERVICE_ADDRESS = "homeplan.db";
 
 	public static final String OPERATION_HEADER = "db-operation";
-	public static final String HOMEPLAN_ID_HEADER = "homeplan-id";
 
 	private static final String HOMEPLAN_COLLECTION_NAME = "homeplans";
 
@@ -75,7 +75,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 						break;
 					case GETONE:
 						Future<Homeplan> futureHomePlan = Future.future();
-						getOne(message.headers().get(HOMEPLAN_ID_HEADER), futureHomePlan);
+						getOne(message.headers().get(RestVerticle.HOMEPLAN_ID_HEADER), futureHomePlan);
 						futureHomePlan.compose(response -> {
 							if (futureHomePlan.result() != null) {
 								message.reply(Json.encodePrettily(futureHomePlan.result()));
@@ -98,7 +98,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 						break;
 					case UPDATE:
 						Future<Homeplan> futureHomePlanUpdate = Future.future();
-						update(message.headers().get(HOMEPLAN_ID_HEADER),
+						update(message.headers().get(RestVerticle.HOMEPLAN_ID_HEADER),
 								Json.decodeValue(message.body(), Homeplan.class), futureHomePlanUpdate);
 						futureHomePlanUpdate.compose(response -> {
 							message.reply(Json.encodePrettily(futureHomePlanUpdate.result()));
@@ -113,7 +113,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 						break;
 					case DELETE:
 						Future<Void> futureHomePlanDelete = Future.future();
-						delete(message.headers().get(HOMEPLAN_ID_HEADER), futureHomePlanDelete);
+						delete(message.headers().get(RestVerticle.HOMEPLAN_ID_HEADER), futureHomePlanDelete);
 						futureHomePlanDelete.compose(response -> {
 							message.reply(futureHomePlanDelete.result());
 						}, Future.future().setHandler(handler -> {
