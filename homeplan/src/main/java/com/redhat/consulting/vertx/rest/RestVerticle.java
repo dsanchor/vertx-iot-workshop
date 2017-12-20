@@ -94,7 +94,7 @@ public class RestVerticle extends AbstractVerticle {
 						for (Room room : homeplan.getRooms()) {
 							logger.info("Registering devices of room " + room.getId());
 							// TODO refactor using futures?
-							vertx.eventBus().send(DEVICE_REGISTRATION_SERVICE_ADDRESS, room.toJson(), buildDeviceManagerDeliveryOptions(DeviceManagerOperation.REGISTER));
+							vertx.eventBus().send(DEVICE_REGISTRATION_SERVICE_ADDRESS, room.toJson().encode(), buildDeviceManagerDeliveryOptions(DeviceManagerOperation.REGISTER));
 
 						}
 						logger.info("Homeplan created");
