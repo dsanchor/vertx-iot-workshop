@@ -43,7 +43,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 	private MongoClient mongoClient;
 
 	@Override
-	public void start(Future<Void> startFuture) {
+	public void start() {
 
 		// create pool for Mongo access
 		// TODO refactor and get info from config map
