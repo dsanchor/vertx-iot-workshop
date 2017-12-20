@@ -90,7 +90,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 						break;
 					case CREATE:
 						Future<Homeplan> futureHomePlanCreate = Future.future();
-						create(Json.decodeValue(message.body(), Homeplan.class), futureHomePlanCreate);
+						save(Json.decodeValue(message.body(), Homeplan.class), futureHomePlanCreate);
 						futureHomePlanCreate.compose(response -> {
 							message.reply(Json.encodePrettily(futureHomePlanCreate.result()));
 						}, Future.future().setHandler(handler -> {
@@ -176,7 +176,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 		getOne(id, futureGet);
 		futureGet.compose(s -> {
 			if (futureGet.result() != null) {
-				create(homeplan, future);
+				save(homeplan, future);
 			} else {
 				future.fail(new ReplyException(ReplyFailure.RECIPIENT_FAILURE, 404, "Homeplan does not exist"));
 			}
@@ -186,7 +186,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 		}));
 	}
 
-	private void create(Homeplan homeplan, Future<Homeplan> future) {
+	private void save(Homeplan homeplan, Future<Homeplan> future) {
 		mongoClient.save(HOMEPLAN_COLLECTION_NAME, toDocument(homeplan), res -> {
 			if (res.succeeded()) {
 				logger.info("Saved homeplan with id " + homeplan.getId());
