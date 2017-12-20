@@ -75,11 +75,13 @@ objects:
       spec:
         containers:
         - env:
-          - name: KUBERNETES_NAMESPACE
+          - name: OPENSHIFT_KUBE_PING_NAMESPACE
             valueFrom:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.namespace
+          - name: JAVA_ARGS
+            value: -cluster
           - name: HOMEPLAN_DB_NAME
             valueFrom:
               secretKeyRef:
