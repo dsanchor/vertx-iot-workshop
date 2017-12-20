@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: ${HOMEPLAN_APP_NAME}
+  name: homeplan-service-template
 objects:
 - apiVersion: v1
   kind: ImageStream
@@ -51,7 +51,7 @@ objects:
     labels:
       app: ${HOMEPLAN_APP_NAME}
       microservice: ${HOMEPLAN_APP_NAME}
-    name: homeplan
+    name: ${HOMEPLAN_APP_NAME}
   spec:
     replicas: 1
     revisionHistoryLimit: 2
@@ -140,7 +140,7 @@ objects:
       app: ${HOMEPLAN_APP_NAME}
       expose: "true"
       microservice: ${HOMEPLAN_APP_NAME}
-    name: homeplan
+    name: ${HOMEPLAN_APP_NAME}
   spec:
     ports:
     - name: http
