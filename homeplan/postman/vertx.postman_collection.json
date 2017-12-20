@@ -32,7 +32,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{  \n   \"id\":\"dsancho-home\",\n   \"rooms\":[  \n      {  \n         \"type\":\"kitchen\",\n         \"temperature\":22,\n         \"devices\":[  \n            {  \n               \"type\":\"ac\",\n               \"id\":\"kitchen-1\"\n            }\n         ]\n      },\n      {  \n         \"type\":\"bedroom\",\n         \"temperature\":23,\n         \"devices\":[  \n            {  \n               \"type\":\"ac\",\n               \"id\":\"bedroom-1\"\n            }\n         ]\n      }\n   ]\n}"
+					"raw": "{  \n   \"id\":\"dsancho-home\",\n   \"rooms\":[  \n      {  \n      \t \"id\":\"kitchen\",\n         \"type\":\"kitchen\",\n         \"temperature\":22,\n         \"devices\":[  \n            {  \n               \"type\":\"ac\",\n               \"id\":\"kitchen-ac-1\"\n            }\n         ]\n      },\n      {  \n      \t \"id\":\"bedroom-1\",\n         \"type\":\"bedroom\",\n         \"temperature\":23,\n         \"devices\":[  \n            {  \n               \"type\":\"ac\",\n               \"id\":\"bedroom-ac-1\"\n            }\n         ]\n      }\n   ]\n}"
 				},
 				"description": ""
 			},
@@ -74,7 +74,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{  \n   \"id\":\"dsancho-home\",\n   \"rooms\":[  \n      {  \n         \"type\":\"kitchen\",\n         \"temperature\":22,\n         \"devices\":[  \n            {  \n               \"type\":\"ac\",\n               \"id\":\"kitchen-1\"\n            }\n         ]\n      },\n      {  \n         \"type\":\"bedroom\",\n         \"temperature\":24,\n         \"devices\":[  \n            {  \n               \"type\":\"ac\",\n               \"id\":\"bedroom-1\"\n            }\n         ]\n      }\n   ]\n}"
+					"raw": "{  \n   \"id\":\"dsancho-home\",\n   \"rooms\":[  \n      {  \n      \t \"id\":\"kitchen\",\n         \"type\":\"kitchen\",\n         \"temperature\":22,\n         \"devices\":[  \n            {  \n               \"type\":\"ac\",\n               \"id\":\"kitchen-ac-1\"\n            }\n         ]\n      },\n      {  \n      \t \"id\":\"bedroom-1\",\n         \"type\":\"bedroom\",\n         \"temperature\":24,\n         \"devices\":[  \n            {  \n               \"type\":\"ac\",\n               \"id\":\"bedroom-ac-1\"\n            }\n         ]\n      }\n   ]\n}"
 				},
 				"description": ""
 			},

@@ -12,6 +12,8 @@ public class Room implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private String id;
 
 	private String type;
 
@@ -26,6 +28,7 @@ public class Room implements Serializable {
 	@SuppressWarnings("unchecked")
 	public Room(JsonObject jsonObject) {
 		super();
+		setId(jsonObject.getString("id"));
 		setType(jsonObject.getString("type"));
 		setTemperature(jsonObject.getInteger("temperature"));
 		if (jsonObject.getJsonArray("devices")!=null) {
@@ -33,6 +36,16 @@ public class Room implements Serializable {
 			setDevices(devices.stream().map(devJsonObject -> new Device((JsonObject) devJsonObject))
 					.collect(Collectors.toList()));
 		}
+	}
+
+	
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getType() {
@@ -61,11 +74,12 @@ public class Room implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Room [type=" + type + ", temperature=" + temperature + ", devices=" + devices + "]";
+		return "Room [id=" + id + ", type=" + type + ", temperature=" + temperature + ", devices=" + devices + "]";
 	}
 	
 	public JsonObject toJson() {
 		final JsonObject room = new JsonObject();
+		room.put("id", getId());
 		room.put("type", getType());
 		room.put("temperature", getTemperature());
 		if (getDevices()!=null) {

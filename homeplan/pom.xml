@@ -39,6 +39,15 @@
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-mongo-client</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-hazelcast</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-service-discovery-bridge-kubernetes</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.redhat.consulting.vertx.MainVerticle;
 import com.redhat.consulting.vertx.model.Homeplan;
 
 import io.vertx.core.AbstractVerticle;
@@ -39,7 +38,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 		GETALL, GETONE, CREATE, UPDATE, DELETE
 	};
 
-	private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
+	private final Logger logger = LoggerFactory.getLogger(HomeplanDbVerticle.class);
 
 	private MongoClient mongoClient;
 
