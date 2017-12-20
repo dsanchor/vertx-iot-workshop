@@ -5,6 +5,15 @@ metadata:
   name: ${HOMEPLAN_APP_NAME}
 objects:
 - apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: ${HOMEPLAN_APP_NAME}
+      microservice: ${HOMEPLAN_APP_NAME}
+    name: ${HOMEPLAN_APP_NAME}
+- apiVersion: v1
   kind: BuildConfig
   metadata:
     creationTimestamp: null
@@ -166,15 +175,6 @@ objects:
       name: ${HOMEPLAN_APP_NAME}
       weight: 100
     wildcardPolicy: None
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    creationTimestamp: null
-    generation: 1
-    labels:
-      app: ${HOMEPLAN_APP_NAME}
-      microservice: ${HOMEPLAN_APP_NAME}
-    name: ${HOMEPLAN_APP_NAME}
 - apiVersion: v1
   kind: Secret
   metadata:

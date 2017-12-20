@@ -15,6 +15,8 @@ public class MainVerticle extends AbstractVerticle {
 	@Override
 	public void start(Future<Void> startFuture) throws Exception {
 
+		// TODO orchrestrate deployment of verticles
+		
 		Future<String> dbVerticleDeployment = Future.future();
 		vertx.deployVerticle(new HomeplanDbVerticle(), dbVerticleDeployment.completer());
 

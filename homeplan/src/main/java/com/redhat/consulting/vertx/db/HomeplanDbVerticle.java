@@ -44,7 +44,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 	private MongoClient mongoClient;
 
 	@Override
-	public void start() {
+	public void start(Future<Void> startFuture) {
 
 		// create pool for Mongo access
 		// TODO refactor and get info from config map
@@ -113,7 +113,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 						}));
 						break;
 					case DELETE:
-						Future<String> futureHomePlanDelete = Future.future();
+						Future<Void> futureHomePlanDelete = Future.future();
 						delete(message.headers().get(HOMEPLAN_ID_HEADER), futureHomePlanDelete);
 						futureHomePlanDelete.compose(response -> {
 							message.reply(futureHomePlanDelete.result());
@@ -176,14 +176,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 		getOne(id, futureGet);
 		futureGet.compose(s -> {
 			if (futureGet.result() != null) {
-				mongoClient.save(HOMEPLAN_COLLECTION_NAME, toDocument(homeplan), res -> {
-					if (res.succeeded()) {
-						logger.info("Updated homeplan with id " + id);
-						future.complete(homeplan);
-					} else {
-						future.fail(res.cause());
-					}
-				});
+				create(homeplan, future);
 			} else {
 				future.fail(new ReplyException(ReplyFailure.RECIPIENT_FAILURE, 404, "Homeplan does not exist"));
 			}
@@ -204,10 +197,10 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 		});
 	}
 
-	private void delete(String id, Future<String> future) {
+	private void delete(String id, Future<Void> future) {
 		mongoClient.removeDocument(HOMEPLAN_COLLECTION_NAME, new JsonObject().put("id", id), res -> {
 			if (res.succeeded()) {
-				future.complete("Homeplan deleted");
+				future.complete();
 			} else {
 				future.fail(res.cause());
 			}
