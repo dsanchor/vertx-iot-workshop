@@ -1,0 +1,164 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: device-manager-service-template
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: ${DEVMANAGER_APP_NAME}
+      microservice: ${DEVMANAGER_APP_NAME}
+    name: ${DEVMANAGER_APP_NAME}
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: ${DEVMANAGER_APP_NAME}
+      microservice: ${DEVMANAGER_APP_NAME}
+    name: ${DEVMANAGER_APP_NAME}
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: {}
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${DEVMANAGER_APP_NAME}:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      binary: {}
+      type: Binary
+    strategy:
+      sourceStrategy:
+        from:
+          kind: DockerImage
+          name: registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift
+      type: Source
+    successfulBuildsHistoryLimit: 5
+    triggers: []
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: ${DEVMANAGER_APP_NAME}
+      microservice: ${DEVMANAGER_APP_NAME}
+    name: ${DEVMANAGER_APP_NAME}
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 2
+    selector:
+      app: ${DEVMANAGER_APP_NAME}
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 3600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: ${DEVMANAGER_APP_NAME}
+      spec:
+        containers:
+        - env:
+          - name: OPENSHIFT_KUBE_PING_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: JAVA_ARGS
+            value: -cluster
+          image: ${DEVMANAGER_APP_NAME}:latest
+          imagePullPolicy: IfNotPresent
+          name: vertx
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 9779
+            name: prometheus
+            protocol: TCP
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources: {}
+          securityContext:
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - vertx
+        from:
+          kind: ImageStreamTag
+          name: ${DEVMANAGER_APP_NAME}:latest
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: ${DEVMANAGER_APP_NAME}
+      expose: "true"
+      microservice: ${DEVMANAGER_APP_NAME}
+    name: ${DEVMANAGER_APP_NAME}
+  spec:
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: ${DEVMANAGER_APP_NAME}
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: ${DEVMANAGER_APP_NAME}
+      expose: "true"
+      microservice: ${DEVMANAGER_APP_NAME}
+    name: ${DEVMANAGER_APP_NAME}
+  spec:
+    port:
+      targetPort: 8080
+    to:
+      kind: Service
+      name: ${DEVMANAGER_APP_NAME}
+      weight: 100
+    wildcardPolicy: None
+parameters:
+- description: Name of the Device manager microservice. This name will be also added to a global label called 'microservice'.
+  displayName: Homeplan application name
+  name: DEVMANAGER_APP_NAME
+  required: true
+  value: device-manager
+
