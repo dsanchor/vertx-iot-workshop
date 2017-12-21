@@ -208,7 +208,7 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 			if (futureGet.result() != null) {
 				mongoClient.removeDocument(HOMEPLAN_COLLECTION_NAME, new JsonObject().put("id", id), res -> {
 					if (res.succeeded()) {
-						future.complete();
+						future.complete(futureGet.result());
 					} else {
 						future.fail(res.cause());
 					}
