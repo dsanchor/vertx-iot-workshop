@@ -81,7 +81,6 @@ public class DeviceManagerVerticle extends AbstractVerticle {
 		OpenShiftClient client = new DefaultOpenShiftClient();
 		for (Device device : room.getDevices()) {
 			String dcName = createName(homeplanId, room.getId(), device.getId());
-			// TODO fix image reference.. I just put one for testing (it should be obtained from param/envvar
 			logger.info("Removing device: " + dcName);
 			client.deploymentConfigs().withName(dcName).delete();
 			logger.info("Device removed");
