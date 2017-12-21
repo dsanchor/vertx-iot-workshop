@@ -27,11 +27,11 @@ items:
     resources: {}
     runPolicy: Serial
     source:
-      git: 
-        uri: https://github.com/dsanchor/vertx-iot-workshop
+      contextDir: undertow-servlet
+      git:
         ref: master
-# TODO add proper context dir (this is just for testing)
-      contextDir: homeplan
+        uri: 'https://github.com/jboss-openshift/openshift-quickstarts'
+      type: Git
     strategy:
       sourceStrategy:
         from:
