@@ -112,12 +112,17 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 						}));
 						break;
 					case DELETE:
-						Future<Void> futureHomePlanDelete = Future.future();
+						Future<Homeplan> futureHomePlanDelete = Future.future();
 						delete(message.headers().get(RestVerticle.HOMEPLAN_ID_HEADER), futureHomePlanDelete);
 						futureHomePlanDelete.compose(response -> {
-							message.reply(futureHomePlanDelete.result());
+							message.reply(Json.encodePrettily(futureHomePlanDelete.result()));
 						}, Future.future().setHandler(handler -> {
-							message.fail(500, "Error deleting homeplan");
+							if (futureHomePlanDelete.cause() instanceof ReplyException) {
+								message.fail(((ReplyException) futureHomePlanDelete.cause()).failureCode(),
+										((ReplyException) futureHomePlanDelete.cause()).getMessage());
+							} else {
+								message.fail(500, "Error deleting homeplan");
+							}
 						}));
 						break;
 					}
@@ -196,14 +201,26 @@ public class HomeplanDbVerticle extends AbstractVerticle {
 		});
 	}
 
-	private void delete(String id, Future<Void> future) {
-		mongoClient.removeDocument(HOMEPLAN_COLLECTION_NAME, new JsonObject().put("id", id), res -> {
-			if (res.succeeded()) {
-				future.complete();
+	private void delete(String id, Future<Homeplan> future) {
+		Future<Homeplan> futureGet = Future.future();
+		getOne(id, futureGet);
+		futureGet.compose(s -> {
+			if (futureGet.result() != null) {
+				mongoClient.removeDocument(HOMEPLAN_COLLECTION_NAME, new JsonObject().put("id", id), res -> {
+					if (res.succeeded()) {
+						future.complete();
+					} else {
+						future.fail(res.cause());
+					}
+				});
 			} else {
-				future.fail(res.cause());
+				future.complete();
 			}
-		});
+		}, Future.future().setHandler(handler -> {
+			logger.error("Homeplan consumer error, replying failure", handler.cause());
+			future.fail("Homeplan delete error");
+		}));
+		
 	}
 
 	/**

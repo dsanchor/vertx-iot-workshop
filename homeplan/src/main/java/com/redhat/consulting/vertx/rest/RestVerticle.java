@@ -94,14 +94,7 @@ public class RestVerticle extends AbstractVerticle {
 					if (reply.succeeded()) {
 						// Homeplan from Json
 						Homeplan homeplan = Json.decodeValue(reply.result().body(), Homeplan.class);
-						for (Room room : homeplan.getRooms()) {
-							logger.info("Registering devices of room " + room.getId());
-							// TODO refactor using futures?
-							vertx.eventBus().send(DEVICE_REGISTRATION_SERVICE_ADDRESS, room.toJson().encode(),
-									buildDeviceManagerDeliveryOptions(DeviceManagerOperation.REGISTER,
-											homeplan.getId()));
-
-						}
+						registerDevices(homeplan);
 						logger.info("Homeplan created");
 						rc.response().putHeader("content-type", "application/json; charset=utf-8")
 								.end(reply.result().body());
@@ -112,10 +105,13 @@ public class RestVerticle extends AbstractVerticle {
 	}
 
 	private void update(RoutingContext rc) {
+		logger.info("Updating homeplan");
 		vertx.eventBus().<String>send(HomeplanDbVerticle.HOMEPLAN_DB_SERVICE_ADDRESS, rc.getBodyAsString(),
 				buildDbDeliveryOptions(HomeplanDbVerticle.Operation.UPDATE, rc.request().getParam(ID_PARAM)), reply -> {
 					if (reply.succeeded()) {
-						logger.info("Updating homeplan");
+						// Homeplan from Json
+						Homeplan homeplan = Json.decodeValue(reply.result().body(), Homeplan.class);
+						registerDevices(homeplan);
 						rc.response().putHeader("content-type", "application/json; charset=utf-8")
 								.end(reply.result().body());
 					} else {
@@ -129,12 +125,35 @@ public class RestVerticle extends AbstractVerticle {
 		vertx.eventBus().<String>send(HomeplanDbVerticle.HOMEPLAN_DB_SERVICE_ADDRESS, "",
 				buildDbDeliveryOptions(HomeplanDbVerticle.Operation.DELETE, rc.request().getParam(ID_PARAM)), reply -> {
 					if (reply.succeeded()) {
+						if (reply.result()!=null) {
+							// Homeplan from Json
+							Homeplan homeplan = Json.decodeValue(reply.result().body(), Homeplan.class);
+							unregisterDevices(homeplan);
+						}						
 						logger.info("Homeplan deleted");
 						rc.response().end();
 					} else {
 						manageReplyError(rc, reply);
 					}
 				});
+	}
+
+	private void registerDevices(Homeplan homeplan) {
+		for (Room room : homeplan.getRooms()) {
+			logger.info("Registering devices of room " + room.getId());
+			vertx.eventBus().send(DEVICE_REGISTRATION_SERVICE_ADDRESS, room.toJson().encode(),
+					buildDeviceManagerDeliveryOptions(DeviceManagerOperation.REGISTER, homeplan.getId()));
+
+		}
+	}
+
+	private void unregisterDevices(Homeplan homeplan) {
+		for (Room room : homeplan.getRooms()) {
+			logger.info("Unregistering devices of room " + room.getId());
+			vertx.eventBus().send(DEVICE_REGISTRATION_SERVICE_ADDRESS, room.toJson().encode(),
+					buildDeviceManagerDeliveryOptions(DeviceManagerOperation.UNREGISTER, homeplan.getId()));
+
+		}
 	}
 
 	private DeliveryOptions buildDeviceManagerDeliveryOptions(DeviceManagerOperation operation, String homeplanId) {

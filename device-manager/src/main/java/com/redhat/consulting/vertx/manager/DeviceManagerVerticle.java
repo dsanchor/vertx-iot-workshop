@@ -55,15 +55,16 @@ public class DeviceManagerVerticle extends AbstractVerticle {
 		logger.info("Registering devices");
 		OpenShiftClient client = new DefaultOpenShiftClient();
 		for (Device device : room.getDevices()) {
+			String dcName = createName(homeplanId, room.getId(), device.getId());
 			// TODO fix image reference.. I just put one for testing (it should be obtained from param/envvar
-			logger.info("Creating device: " + createName(homeplanId, room.getId(), device.getId()));
+			logger.info("Creating device: " + dcName);
 			// create labels
 			Map<String, String> labels = new HashMap<>();
 			labels.put("homeplan", homeplanId);
 			labels.put("room", room.getId());
 			labels.put("device", device.getId());
 			// create DC
-			client.deploymentConfigs().createOrReplaceWithNew().withNewMetadata().withName(createName(homeplanId, room.getId(), device.getId()))
+			client.deploymentConfigs().createOrReplaceWithNew().withNewMetadata().withName(dcName)
 					.withLabels(labels).endMetadata().withNewSpec().withReplicas(1).addNewTrigger()
 					.withType("ConfigChange").endTrigger().addToSelector("device", device.getId()).withNewTemplate()
 					.withNewMetadata().addToLabels("device", device.getId()).endMetadata().withNewSpec()
@@ -74,13 +75,21 @@ public class DeviceManagerVerticle extends AbstractVerticle {
 		}
 	}
 
-	private String createName(String homeplanId, String room, String device) {
-		return homeplanId +"-"+room+"-"+device;
-	}
-
 	// FIXME use sync workers
 	private void unregister(Room decodeValue, String homeplanId) {
 		logger.info("Unregistering devices");
+		OpenShiftClient client = new DefaultOpenShiftClient();
+		for (Device device : room.getDevices()) {
+			String dcName = createName(homeplanId, room.getId(), device.getId());
+			// TODO fix image reference.. I just put one for testing (it should be obtained from param/envvar
+			logger.info("Removing device: " + dcName);
+			client.deploymentConfigs().withName(dcName).delete();
+			logger.info("Device removed");
+		}
 
+	}
+	
+	private String createName(String homeplanId, String room, String device) {
+		return homeplanId +"-"+room+"-"+device;
 	}
 }
