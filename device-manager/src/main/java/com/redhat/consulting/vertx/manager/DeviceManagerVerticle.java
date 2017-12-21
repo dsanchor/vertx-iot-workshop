@@ -76,7 +76,7 @@ public class DeviceManagerVerticle extends AbstractVerticle {
 	}
 
 	// FIXME use sync workers
-	private void unregister(Room decodeValue, String homeplanId) {
+	private void unregister(Room room, String homeplanId) {
 		logger.info("Unregistering devices");
 		OpenShiftClient client = new DefaultOpenShiftClient();
 		for (Device device : room.getDevices()) {
